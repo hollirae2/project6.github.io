@@ -1,14 +1,12 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
+
 <title>25 Over Tickets</title>
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 </head>
@@ -36,78 +34,59 @@
 
      <h2>25 MPH or More Over the Speed Limit</h2>
 
-     <table class="table table-bordered table-striped">
+          <table class="table table-bordered table-striped">
 
-         <tr>
-             <th>Ticket ID</th>
-             <th>Time</th>
-             <th>Posted Speed</th>
-             <th>MPH Over</th>
-             <th>Violator Sex</th>
-         </tr>
+              <tr>
+                  <th>Ticket ID</th>
+                  <th>Time</th>
+                  <th>Posted Speed</th>
+                  <th>MPH Over</th>
+                  <th>Violator Sex</th>
+              </tr>
 
-         <tr v-for="ticket in filteredTickets">
+              <tr v-for="ticket in filteredTickets">
 
-             <td>{{ticket.tid}}</td>
+                  <td>{{ticket.tid}}</td>
+                  <td>{{ticket.stop_time}}</td>
+                  <td>{{ticket.posted_speed}}</td>
+                  <td>{{ticket.actual_speed - ticket.posted_speed}}</td>
+                  <td>{{ticket.violator_sex}}</td>
 
-             <td>{{ticket.stop_time}}</td>
+              </tr>
 
-             <td>{{ticket.posted_speed}}</td>
+         </table>
 
-             <td>{{ticket.actual_speed - ticket.posted_speed}}</td>
+</div>
 
-             <td>{{ticket.violator_sex}}</td>
-
-         </tr>
-
-     </table>
-
-</div>   <!-- end ticketApp -->
-
-</div>   <!-- end container -->
+</div>
 
 <script>
 
-let app = Vue.createApp({
+       let app = Vue.createApp({
+            data() {
+                return {
+                    tickets: []
+                }
+            },
+            computed: {
+                filteredTickets() {
+                    return this.tickets.filter(ticket =>
+                        (ticket.actual_speed - ticket.posted_speed) >= 25
+                    )
+                }
+            },
+            created() {
+                this.getData()
+            },
+            methods: {
+                async getData() {
+                    const response = await fetch('tickets1.json')
+                    this.tickets = await response.json()
+                },
+            }
+          })
 
-    data() {
-
-        return {
-
-            tickets: []
-
-        }
-    },
-
-    computed: {
-
-        filteredTickets() {
-
-            return this.tickets.filter(ticket =>
-
-                (ticket.actual_speed - ticket.posted_speed) >= 25
-            )
-        }
-    },
-
-    created() {
-
-        this.getData()
-    },
-
-    methods: {
-
-        async getData() {
-
-            const response = await fetch('tickets1.json')
-
-            this.tickets = await response.json()
-        }
-    }
-
-})
-
-app.mount('#ticketApp')
+      app.mount('#ticketApp')
 
 </script>
 
